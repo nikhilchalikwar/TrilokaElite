@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triloka Elite | Bridging Infrastructure & Livelihoods</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --secondary: #8b5cf6;
+            --accent: #f59e0b;
+            --background: #0a0a0f;
+            --surface: #1a1a2e;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            --spacing-xl: 6rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease, background 0.15s ease;
+            background: transparent;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .custom-cursor.hover {
+            transform: scale(1.5);
+            background: rgba(14, 165, 233, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                cursor: auto;
+            }
+
+            .custom-cursor {
+                display: none;
+            }
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--glass-border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            padding: 1.5rem 0;
+        }
+
+        header.scrolled {
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1rem 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                background: rgba(26, 26, 46, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 5rem 2rem;
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+
+        section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 2rem;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .typewriter {
+            border-right: 3px solid var(--primary);
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-tags {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+
+        .tag {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+            animation: pulse 2s ease infinite;
+            border: none;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 50px rgba(14, 165, 233, 0.6);
+            }
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(14, 165, 233, 0.5);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .challenge-section {
+            background: var(--surface);
+            clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%);
+            padding: calc(var(--spacing-xl) + 2rem) 0;
+        }
+
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(14, 165, 233, 0.3);
+            border-color: var(--primary);
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .card-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .solution-section {
+            background: var(--background);
+        }
+
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .solution-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            perspective: 1000px;
+        }
+
+        .solution-card:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+            box-shadow: 0 25px 70px rgba(139, 92, 246, 0.3);
+        }
+
+        .solution-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--background) 100%);
+            padding: var(--spacing-xl) 0;
+            position: relative;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .process-section {
+            background: var(--background);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 50%;
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 50%;
+        }
+
+        .timeline-content {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            width: 90%;
+            position: relative;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border: 3px solid var(--background);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .timeline-year {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 0;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                padding-left: 2rem;
+                padding-right: 0;
+                justify-content: flex-start;
+            }
+
+            .timeline-dot {
+                left: 0;
+            }
+        }
+
+        .impact-section {
+            background: var(--surface);
+            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 95%);
+            padding: calc(var(--spacing-xl) + 2rem) 0;
+        }
+
+        .founder-section {
+            background: var(--background);
+            padding: var(--spacing-xl) 0;
+        }
+
+        .founder-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .founder-image-wrapper {
+            position: relative;
+        }
+
+        .founder-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(14, 165, 233, 0.3);
+            border: 3px solid var(--glass-border);
+        }
+
+        .founder-info h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .founder-role {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .founder-bio {
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .founder-highlights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .highlight-badge {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .highlight-badge i {
+            color: var(--primary);
+        }
+
+        @media (max-width: 968px) {
+            .founder-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .founder-image {
+                margin: 0 auto;
+            }
+
+            .founder-highlights {
+                justify-content: center;
+            }
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .impact-card {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .impact-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.4);
+        }
+
+        .impact-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .impact-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .impact-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-section {
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+            text-align: center;
+            padding: var(--spacing-xl) 2rem;
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-item i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        footer {
+            background: var(--background);
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        footer p {
+            color: var(--text-muted);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 25px rgba(14, 165, 233, 0.4);
+            border: none;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(14, 165, 233, 0.6);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-1 {
+            transition-delay: 0.1s;
+        }
+
+        .stagger-2 {
+            transition-delay: 0.2s;
+        }
+
+        .stagger-3 {
+            transition-delay: 0.3s;
+        }
+
+        .stagger-4 {
+            transition-delay: 0.4s;
+        }
+
+        svg.blob {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .blob-1 {
+            top: -100px;
+            left: -100px;
+            width: 400px;
+            fill: var(--primary);
+        }
+
+        .blob-2 {
+            bottom: -150px;
+            right: -100px;
+            width: 500px;
+            fill: var(--secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="custom-cursor"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <div id="loader">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p>Loading Triloka Elite...</p>
+        </div>
+    </div>
+
+    <header id="header">
+        <nav>
+            <div class="logo">
+                <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/ea7d7bea-827a-43dd-b07f-65d84c531de5"
+                    alt="Triloka Elite Logo">
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#challenge">Challenge</a></li>
+                <li><a href="#solution">Solution</a></li>
+                <li><a href="#founder">Leadership</a></li>
+                <li><a href="#impact">Impact</a></li>
+                <li><a href="#roadmap">Roadmap</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1><span class="typewriter" id="typewriter"></span></h1>
+                <p class="hero-subtitle">Smart Infrastructure • Sustainable Livelihoods • Women-Centric Manufacturing
+                </p>
+                <div class="hero-tags">
+                    <span class="tag">🏛️ Government Procurement</span>
+                    <span class="tag">🎨 Artisan Empowerment</span>
+                    <span class="tag">💻 Smart Classrooms</span>
+                    <span class="tag">🚀 DPIIT Startup</span>
+                </div>
+                <a href="#contact" class="cta-button">Let's Transform Marathwada</a>
+            </div>
+        </section>
+
+        <section class="challenge-section" id="challenge">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">The Tier-2 City Deficit</h2>
+                    <p class="section-subtitle">Bridging critical gaps in Marathwada's ecosystem</p>
+                </div>
+                <div class="challenge-grid">
+                    <div class="glass-card fade-in stagger-1">
+                        <div class="card-icon">🏚️</div>
+                        <h3 class="card-title">Livelihood Gap (B2C)</h3>
+                        <p class="card-description">Skilled artisans lack digital market access. Traditional crafts are
+                            dying. Low wages, poor income. No value chain integration.</p>
+                    </div>
+                    <div class="glass-card fade-in stagger-2">
+                        <div class="card-icon">🖥️</div>
+                        <h3 class="card-title">Infrastructure Gap (B2G)</h3>
+                        <p class="card-description">Schools receive Smart Panels but lack regional content & local tech
+                            support. Zero installation support. Equipment remains underutilized.</p>
+                    </div>
+                    <div class="glass-card fade-in stagger-3">
+                        <div class="card-icon">⏱️</div>
+                        <h3 class="card-title">Service Gap</h3>
+                        <p class="card-description">Big brands take 7 days for service in Marathwada. Local ecosystem
+                            needs immediate technical handholding and rapid response.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="solution-section" id="solution">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">Dual-Engine Innovation</h2>
+                    <p class="section-subtitle">Our unique operational model solving both gaps simultaneously</p>
+                </div>
+                <div class="solution-grid">
+                    <div class="solution-card fade-in stagger-1">
+                        <div class="solution-number">01</div>
+                        <h3 class="card-title">Event-Ready Rapid Prototyping</h3>
+                        <p class="card-description">Just-in-Time Design Protocol for Floral South Indian Jewellery.
+                            Custom outfits for weddings within 48 hours. Design-led manufacturing minimizing inventory
+                            waste.</p>
+                    </div>
+                    <div class="solution-card fade-in stagger-2">
+                        <div class="solution-number">02</div>
+                        <h3 class="card-title">Tier-2 Tech-Support Grid</h3>
+                        <p class="card-description">Pre-Configured, Plug-and-Play Digital Classrooms with guaranteed
+                            6-Hour Service TAT in Nanded/Marathwada. End-to-end smart classroom integration.</p>
+                    </div>
+                    <div class="solution-card fade-in stagger-3">
+                        <div class="solution-number">03</div>
+                        <h3 class="card-title">Circular Fashion Economy</h3>
+                        <p class="card-description">Upcycling fabric waste from outfit production into sustainable
+                            packaging for jewellery. Zero-waste design cooperative model.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">Growth Trajectory</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item fade-in stagger-1">
+                        <div class="stat-number" data-target="65">0</div>
+                        <div class="stat-label">Lakh Smart Infrastructure Target</div>
+                    </div>
+                    <div class="stat-item fade-in stagger-2">
+                        <div class="stat-number" data-target="55">0</div>
+                        <div class="stat-label">Lakh Women Artisan Revenue</div>
+                    </div>
+                    <div class="stat-item fade-in stagger-3">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Micro-Entrepreneurs by 2027</div>
+                    </div>
+                    <div class="stat-item fade-in stagger-4">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Rural Classrooms Digitized</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="process-section" id="roadmap">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">Vision 2027 Roadmap</h2>
+                    <p class="section-subtitle">Phased expansion across Marathwada</p>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item fade-in">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2025</div>
+                            <h3 class="card-title">Foundation</h3>
+                            <p class="card-description">Nanded hub operational. First 5 clients secured. Prototype
+                                products ready. Space identified.</p>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                    <div class="timeline-item fade-in">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2026</div>
+                            <h3 class="card-title">Expansion</h3>
+                            <p class="card-description">Latur expansion. 20 clients onboarded. Marathwada coverage
+                                begins. GeM procurement scaling.</p>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                    <div class="timeline-item fade-in">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2027</div>
+                            <h3 class="card-title">Full Scale</h3>
+                            <p class="card-description">Parbhani launch. All Marathwada districts covered. ₹1 Cr revenue
+                                milestone. 500 micro-entrepreneurs. 25 direct jobs.</p>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                    <div class="timeline-item fade-in">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2028+</div>
+                            <h3 class="card-title">Beyond</h3>
+                            <p class="card-description">Nanded as Global Export Hub for Handcrafted Indian Heritage
+                                Jewellery. Operational backbone of Marathwada.</p>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="founder-section" id="founder">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">Leadership</h2>
+                    <p class="section-subtitle">Driving transformation from the ground up</p>
+                </div>
+                <div class="founder-content fade-in">
+                    <div class="founder-image-wrapper">
+                        <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/2fdfd658-934d-49a7-b37b-45ea6b4a9ec8"
+                            alt="Sagar Dhoot - Managing Director" class="founder-image">
+                    </div>
+                    <div class="founder-info">
+                        <h3>Nikheel Chalikwar</h3>
+                        <p class="founder-role">Managing Director & Founder</p>
+                        <p class="founder-bio">
+                            Entrepreneur with hands-on experience in supply chain and Tier-2 market operations.
+                            Leading Triloka Elite with a vision to become the operational backbone of Marathwada,
+                            bridging critical infrastructure and livelihood gaps through innovative dual-engine business
+                            model.
+                        </p>
+                        <p class="founder-bio">
+                            Current focus on operational processes, MSME partnerships, and product prototypes
+                            to scale impact across Marathwada districts.
+                        </p>
+                        <div class="founder-highlights">
+                            <span class="highlight-badge">
+                                <i class="fas fa-briefcase"></i>
+                                Supply Chain Expert
+                            </span>
+                            <span class="highlight-badge">
+                                <i class="fas fa-handshake"></i>
+                                15-20 MSME Partners
+                            </span>
+                            <span class="highlight-badge">
+                                <i class="fas fa-users"></i>
+                                Women Artisan Networks
+                            </span>
+                            <span class="highlight-badge">
+                                <i class="fas fa-graduation-cap"></i>
+                                Education Partnerships
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="impact-section" id="impact">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">Social Impact</h2>
+                    <p class="section-subtitle">Empowering women and youth across Marathwada</p>
+                </div>
+                <div class="impact-grid">
+                    <div class="impact-card fade-in stagger-1">
+                        <div class="impact-icon">👩‍🎨</div>
+                        <h3 class="impact-title">Women Empowerment</h3>
+                        <p class="impact-value">30+</p>
+                        <p class="card-description">Women employed by 2027 with ₹8-10k/month income and work-from-home
+                            flexibility</p>
+                    </div>
+                    <div class="impact-card fade-in stagger-2">
+                        <div class="impact-icon">🔧</div>
+                        <h3 class="impact-title">Youth Skills</h3>
+                        <p class="impact-value">25+</p>
+                        <p class="card-description">Direct jobs by 2027. Field technicians with AV hardware expertise in
+                            gig workforce model</p>
+                    </div>
+                    <div class="impact-card fade-in stagger-3">
+                        <div class="impact-icon">💰</div>
+                        <h3 class="impact-title">Cooperative Revenue</h3>
+                        <p class="impact-value">₹40L</p>
+                        <p class="card-description">Annual revenue for women's cooperative with transparent digital
+                            tracking</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section" id="contact">
+            <svg class="blob blob-1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M43.3,-64.4C55.5,-56.4,64.4,-43.3,70.7,-28.5C77,-13.7,80.6,2.8,77.8,18.1C75,33.5,65.8,47.7,53.8,58.8C41.7,69.9,26.9,77.9,10.7,80.4C-5.5,82.9,-22.9,79.9,-37.7,71.5C-52.5,63.1,-64.7,49.3,-71.8,33.5C-78.9,17.7,-80.9,-0.1,-76.8,-15.9C-72.7,-31.7,-62.5,-45.4,-49.6,-53.1C-36.7,-60.9,-21.1,-62.7,-5.4,-65.9C10.3,-69.1,31.1,-72.3,43.3,-64.4Z"
+                    transform="translate(100 100)" />
+            </svg>
+            <svg class="blob blob-2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M38.7,-58.9C48.9,-50.1,55.4,-37.6,61.3,-24.5C67.2,-11.4,72.5,2.3,70.5,15.2C68.5,28.1,59.3,40.2,47.8,48.8C36.3,57.4,22.5,62.5,7.8,66.1C-6.9,69.7,-22.5,71.8,-35.8,66.2C-49.1,60.6,-60.1,47.3,-66.6,32.2C-73.1,17.1,-75.1,0.2,-71.8,-14.8C-68.5,-29.8,-59.9,-42.9,-48.5,-51.4C-37.1,-59.9,-22.9,-63.8,-8.8,-66.3C5.3,-68.8,28.5,-67.6,38.7,-58.9Z"
+                    transform="translate(100 100)" />
+            </svg>
+            <div class="contact-content">
+                <h2 class="contact-title fade-in">Let's Transform Marathwada Together</h2>
+                <p class="contact-subtitle fade-in">Bridging Infrastructure & Livelihoods</p>
+                <a href="https://wa.link/apkgbm" class="cta-button fade-in">Get in Touch</a>
+                <div class="contact-info fade-in">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Nanded, Maharashtra</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-certificate"></i>
+                        <span>DPIIT Startup Registration</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-building"></i>
+                        <span>OPC Private Limited</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Triloka Elite OPC Private Limited. All Rights Reserved. | Bridging the Gap for Bharat</p>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1500);
+        });
+
+        // Custom Cursor
+        const cursor = document.querySelector('.custom-cursor');
+        const links = document.querySelectorAll('a, button, .glass-card, .solution-card, .impact-card');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            link.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Particles Canvas
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 80;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(14, 165, 233, 0.5)';
+                ctx.fill();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Typewriter Effect
+        const text = "Bridging the Gap";
+        const typewriter = document.getElementById('typewriter');
+        let i = 0;
+
+        function type() {
+            if (i < text.length) {
+                typewriter.textContent += text.charAt(i);
+                i++;
+                setTimeout(type, 150);
+            }
+        }
+
+        setTimeout(type, 2000);
+
+        // Scroll Header
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile Menu
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Intersection Observer for Fade-in
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        fadeElements.forEach(element => observer.observe(element));
+
+        // Counter Animation
+        const counters = document.querySelectorAll('.stat-number');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.getAttribute('data-target'));
+                    const increment = target / 100;
+                    let current = 0;
+
+                    const updateCounter = () => {
+                        current += increment;
+                        if (current < target) {
+                            entry.target.textContent = Math.ceil(current);
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            entry.target.textContent = target + (target >= 100 ? '+' : 'L');
+                        }
+                    };
+
+                    updateCounter();
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => counterObserver.observe(counter));
+
+        // Back to Top
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Card Tilt Effect
+        const cards = document.querySelectorAll('.solution-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            });
+        });
+    </script>
+</body>
+
+</html>
